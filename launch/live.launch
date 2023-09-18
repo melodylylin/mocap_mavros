@@ -1,0 +1,37 @@
+<launch>
+  <!--qualisys-->
+  <node pkg="qualisys_mocap" type="qualisys_node" name="qualisys" output="screen">
+    <param name="server" value="192.168.123.2"/>
+    <param name="rate_limit" value="10"/>
+    <param name="parent_frame" value="odom"/>
+  </node>
+
+  <!-- start drone  -->
+  <group ns="drone" clear_params="true">
+
+    <!--topic relay for mocap-->
+    <node pkg="topic_tools" type="relay" name="relay" output="log" args="/qualisys/drone/odom /drone/mavros/odometry/out"/>
+
+    <!-- tf frames -->
+    <node name="tf_base_link_camera" pkg="tf2_ros" type="static_transform_publisher"
+      args="0 0 0 0 0 0 base_link camera_link"/>
+    <node name="tf_base_link_drone" pkg="tf2_ros" type="static_transform_publisher"
+      args="0 0 0 0 0 0 base_link drone"/>
+
+    <!-- mavros -->
+    <node pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="log" respawn="false">
+      <param name="fcu_url" value="/dev/ttyUSB0:921600" />
+      <param name="gcs_url" value="" />
+      <param name="target_system_id" value="1" />
+      <param name="target_component_id" value="1" />
+      <param name="fcu_protocol" value="v2.0" />
+      <!-- load blacklist, config -->
+      <rosparam command="load" file="$(find mocap)/launch/px4_pluginlists.yaml" />
+      <rosparam command="load" file="$(find mocap)/launch/px4_config.yaml" />
+    </node>
+
+  </group>
+
+</launch>
+
+<!-- vim set ft=xml ts=2 sw=2 et: -->

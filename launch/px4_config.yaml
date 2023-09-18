@@ -1,0 +1,16 @@
+# Common configuration for PX4 autopilot
+#
+
+# odom
+/drone1/mavros/**/odometry:
+  ros__parameters:
+    fcu.odom_parent_id_des: "map"    # desired parent frame rotation of the FCU's odometry
+    fcu.odom_child_id_des: "drone1"    # desired child frame rotation of the FCU's odometry
+
+/drone161/mavros/**/odometry:
+  ros__parameters:
+    fcu.odom_parent_id_des: "map"    # desired parent frame rotation of the FCU's odometry
+    fcu.odom_child_id_des: "drone161"    # desired child frame rotation of the FCU's odometry
+
+
+# vim:set ts=2 sw=2 et:
